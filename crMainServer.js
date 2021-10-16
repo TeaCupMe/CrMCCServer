@@ -1,6 +1,6 @@
 const http = require("http");
 const fs = require("fs");
-const { get } = require("https");
+
 
 //////////////////////////////////
 //                              //
@@ -12,7 +12,7 @@ const html = fs.readFileSync("./home.html")
 const host = 'localhost';
 const port = 61600;
 var Datastore = require('nedb');
-var db = new Datastore({ filename: 'database1' });
+var db = new Datastore({ filename: './databases/database1' });
 db.loadDatabase();
 db.find({ type: "info" }, (err, data) => {
     if (data.length == 0) {
@@ -56,7 +56,9 @@ async function requestListener(req, res) {
             return
         }
     } else if (req.method == "GET") {
+        console.log(req.url)
         if (getAliasOnPosition(req.url, 2) == "getLatest") {
+            console.log("applied")
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); //TODO return last 
             db.find({ type: "info" }, (err, array) => {
                 let _lastID = array[0].lastID;
@@ -85,6 +87,24 @@ server.listen(port, host, () => {
     console.log(`Server is running on http://${host}:${port}`);
 });
 
+/**
+ * 
+ * @param {String} uri 
+ * @param {Number} position 
+ * @returns {String}  
+ */
 function getAliasOnPosition(uri, position) {
     return uri.split("/")[position]
+}
+
+/**
+ * 
+ * @param {String} data 
+ */
+function convertData(data) {
+    
+    let _rawData = JSON.parse(data);
+    
+    
+    return _normalizedData
 }
