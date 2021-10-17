@@ -9,6 +9,8 @@ const fs = require("fs");
 //////////////////////////////////
 
 const html = fs.readFileSync("./home.html")
+
+const wrongPageHTML = fs.readFileSync("./wrongPage.html")
 const host = 'localhost';
 const port = 61600;
 var Datastore = require('nedb');
@@ -67,7 +69,6 @@ async function requestListener(req, res) {
                     console.log(data)
                     res.write(JSON.stringify(data[0]));
                     res.end();
-                    
                 })
             })
             // console.log(b)
@@ -76,10 +77,15 @@ async function requestListener(req, res) {
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); //TODO add ability to fetch several last datasets
             res.end("Latest n Info:");
             return
+        } else if (getAliasOnPosition(req.url, 2) == "static") {
+            res.writeHead(200, {'Content-Type': 'text/sass'})
+            res.write(fs.readFileSync("./style.scss"))
+            res.end()
+            return
         }
     }
     res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' })
-    res.write(html)
+    res.write(wrongPageHTML)
     res.end("Invalid link")
 };
 const server = http.createServer(requestListener);
